@@ -84,6 +84,56 @@ window.addEventListener('scroll', () => {
 window.addEventListener('resize', updateNavigation);
 updateNavigation();
 
+const elevator = document.querySelector<HTMLElement>('[data-elevator]');
+if (elevator) {
+  const allStops = Array.from(elevator.querySelectorAll<HTMLAnchorElement>('.elevator-shaft a'));
+  // Sections can be absent (e.g. no contribution graph), so drop their stops.
+  allStops.filter(stop => !document.querySelector(stop.hash)).forEach(stop => stop.closest('li')?.remove());
+  const stops = allStops.filter(stop => stop.isConnected);
+  const targets = stops.map(stop => document.querySelector<HTMLElement>(stop.hash)!);
+  const car = elevator.querySelector<HTMLElement>('.elevator-car')!;
+  const fill = elevator.querySelector<HTMLElement>('.elevator-fill')!;
+  const stepButtons = Array.from(elevator.querySelectorAll<HTMLButtonElement>('[data-elevator-step]'));
+  const topOf = (el: HTMLElement) => el.getBoundingClientRect().top + window.scrollY;
+  const maxScroll = () => document.documentElement.scrollHeight - window.innerHeight;
+  // Scroll position that brings each stop into view; the last ones clamp at the page bottom.
+  const positions = () => targets.map(t => Math.min(Math.max(topOf(t) - 42, 0), maxScroll()));
+  let index = 0;
+  const render = () => {
+    const y = window.scrollY;
+    const pos = positions();
+    const centers = stops.map(s => s.offsetTop + s.offsetHeight / 2);
+    let i = 0;
+    for (let k = 0; k < pos.length; k++) if (y >= pos[k] - window.innerHeight * .3) i = k;
+    if (maxScroll() > 0 && y >= maxScroll() - 4) i = pos.length - 1;
+    index = i;
+    let carY = centers[i];
+    if (i < pos.length - 1 && pos[i + 1] > pos[i]) {
+      const frac = Math.min(Math.max((y - pos[i]) / (pos[i + 1] - pos[i]), 0), 1);
+      carY = centers[i] + frac * (centers[i + 1] - centers[i]);
+    }
+    car.style.transform = `translate(-50%, ${carY - 7}px)`;
+    fill.style.height = `${carY}px`;
+    stops.forEach((s, k) => {
+      s.toggleAttribute('data-passed', k <= i);
+      if (k === i) s.setAttribute('aria-current', 'location'); else s.removeAttribute('aria-current');
+    });
+    stepButtons[0].disabled = y <= 2;
+    stepButtons[1].disabled = maxScroll() > 0 && y >= maxScroll() - 2;
+  };
+  const goTo = (k: number) => {
+    const pos = positions();
+    window.scrollTo({ top: pos[k], behavior: reducedMotion.matches ? 'instant' : 'smooth' });
+  };
+  stops.forEach((stop, k) => stop.addEventListener('click', event => { event.preventDefault(); goTo(k); history.replaceState(null, '', stop.hash); }));
+  stepButtons.forEach(button => button.addEventListener('click', () => goTo(Math.min(Math.max(index + Number(button.dataset.elevatorStep), 0), stops.length - 1))));
+  let pending = false;
+  window.addEventListener('scroll', () => { if (!pending) { pending = true; requestAnimationFrame(() => { pending = false; render(); }); } }, { passive: true });
+  window.addEventListener('resize', render);
+  new ResizeObserver(render).observe(document.body);
+  render();
+}
+
 export {};
 
 const card = document.querySelector<HTMLElement>('[data-contribution-card]');

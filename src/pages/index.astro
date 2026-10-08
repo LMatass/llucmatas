@@ -16,7 +16,7 @@ const title = `Lluc Matas — ${profile.role} in Mallorca`;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#151718" />
+    <meta name="theme-color" content="#0d1626" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -157,6 +157,18 @@ const title = `Lluc Matas — ${profile.role} in Mallorca`;
         <span class="footer-location">Made in Mallorca.</span>
       </footer>
     </div>
+    <nav class="elevator" aria-label="Page sections" data-elevator>
+      <button class="elevator-step" type="button" data-elevator-step="-1" aria-label="Previous section"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg></button>
+      <ol class="elevator-shaft">
+        <li class="elevator-cable" aria-hidden="true"><span class="elevator-fill"></span><span class="elevator-car"></span></li>
+        <li><a href="#me" data-label="Me"><span class="sr-only">Me</span></a></li>
+        <li><a href="#activity" data-label="Activity"><span class="sr-only">Activity</span></a></li>
+        <li><a href="#work" data-label="Work"><span class="sr-only">Work</span></a></li>
+        <li><a href="#experience" data-label="Experience"><span class="sr-only">Experience</span></a></li>
+        <li><a href="#contact" data-label="Contact"><span class="sr-only">Contact</span></a></li>
+      </ol>
+      <button class="elevator-step" type="button" data-elevator-step="1" aria-label="Next section"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+    </nav>
     <script src="../scripts/portfolio.ts"></script>
   </body>
 </html>
