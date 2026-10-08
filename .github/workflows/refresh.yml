@@ -1,0 +1,20 @@
+name: Refresh deploy
+
+# Rebuilds the site daily so the GitHub contribution graph stays current.
+on:
+  schedule:
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install -g @railway/cli
+      - run: railway up --ci --service portfolio
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
