@@ -3,7 +3,9 @@ import '@fontsource-variable/manrope';
 import '../styles/global.css';
 import Icon from '../components/Icon.astro';
 import { profile, projects, repositories, experience } from '../data/portfolio';
+import { getContributions } from '../data/contributions';
 const description = 'Lluc Matas — Software Engineer based in Mallorca. Professional experience, personal projects, and full-stack starters.';
+const contributions = await getContributions(profile.github.split('/').pop()!);
 const title = `Lluc Matas — ${profile.role} in Mallorca`;
 ---
 <!doctype html>
@@ -85,6 +87,25 @@ const title = `Lluc Matas — ${profile.role} in Mallorca`;
             </ul>
           </details>
         </section>
+        {contributions && (
+          <section class="contributions" id="contributions" aria-labelledby="contributions-title">
+            <div class="section-heading">
+              <h2 id="contributions-title">Activity</h2>
+              <span class="section-note">{contributions.total.toLocaleString('en-US')} contributions in the last year · <a class="inline-link" href={profile.github} target="_blank" rel="noopener noreferrer">GitHub<span class="sr-only"> (opens in a new tab)</span></a></span>
+            </div>
+            <div class="contribution-scroll" tabindex="0" role="region" aria-label="GitHub contribution graph, scrollable">
+              <ol class="contribution-graph">
+                {contributions.weeks.map((week) => (
+                  <li><ol>
+                    {week.map((day) => (
+                      <li class={`level-${day.level}`} title={`${day.count} contribution${day.count === 1 ? '' : 's'} on ${day.date}`}></li>
+                    ))}
+                  </ol></li>
+                ))}
+              </ol>
+            </div>
+          </section>
+        )}
         <section class="experience" id="experience" aria-labelledby="experience-title">
           <div class="experience-heading">
             <h2 id="experience-title">Experience</h2>

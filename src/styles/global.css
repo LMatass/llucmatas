@@ -85,6 +85,18 @@ h3 { font-size: 17px; font-weight: 500; letter-spacing: -.015em; line-height: 1.
 .repository-name { font-size: 15px; display: block; }
 .repository-description { display: block; margin-top: 5px; font-size: 13px; line-height: 1.6; color: var(--color-muted); }
 .repository-list a:hover .repository-name { text-decoration: underline; text-underline-offset: 4px; }
+.contributions { margin-top: 42px; padding-top: 32px; border-top: 1px solid var(--color-line); }
+.inline-link { text-decoration: underline; text-underline-offset: 4px; }
+.inline-link:hover { color: var(--color-text); }
+.contribution-scroll { overflow-x: auto; padding-bottom: 8px; scrollbar-width: thin; scrollbar-color: #505961 transparent; }
+.contribution-graph, .contribution-graph ol { list-style: none; margin: 0; padding: 0; display: flex; }
+.contribution-graph { gap: 4px; width: max-content; margin-inline: auto; }
+.contribution-graph ol { flex-direction: column; gap: 4px; }
+.contribution-graph li li { width: 12px; height: 12px; border-radius: 3px; background: var(--color-surface); box-shadow: inset 0 0 0 1px #24282b; }
+.contribution-graph li li.level-1 { background: #27384d; box-shadow: none; }
+.contribution-graph li li.level-2 { background: #3f5f86; box-shadow: none; }
+.contribution-graph li li.level-3 { background: #6c97c9; box-shadow: none; }
+.contribution-graph li li.level-4 { background: var(--color-focus); box-shadow: none; }
 .experience { display: grid; grid-template-columns: 1fr 2fr; gap: 40px; margin-top: 42px; padding-top: 32px; border-top: 1px solid var(--color-line); }
 .experience-heading .text-link { margin-top: 10px; font-size: 13px; }
 .experience-list { list-style: none; padding: 0; margin: 0; }
@@ -129,6 +141,8 @@ footer { display: flex; align-items: center; gap: 44px; margin-top: 28px; paddin
   .browse-button { position: static; width: 40px; height: 40px; }
   .project p { font-size: 13px; max-width: 31ch; }
   .public-code { margin-top: 28px; }
+  .contributions { margin-top: 28px; padding-top: 28px; }
+  .contribution-graph { margin-inline: 0; }
   .experience { grid-template-columns: 1fr; gap: 24px; margin-top: 28px; padding-top: 28px; }
   .experience-title { flex-wrap: wrap; gap: 4px 16px; }
   footer { flex-wrap: wrap; gap: 16px 28px; padding-bottom: 32px; margin-top: 20px; }
