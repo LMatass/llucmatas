@@ -56,3 +56,41 @@ export async function getContributions(login: string): Promise<Contributions | n
     return null;
   }
 }
+
+const dayMs = 86_400_000;
+
+export function summarize({ weeks }: Contributions) {
+  const days = weeks.flat();
+  const dayNumber = (date: string) => Math.round(Date.parse(date) / dayMs);
+  let longest = 0;
+  let run = 0;
+  let previous = -Infinity;
+  for (const day of days) {
+    const n = dayNumber(day.date);
+    run = day.count > 0 ? (n - previous === 1 && run > 0 ? run + 1 : 1) : 0;
+    if (day.count > 0) previous = n;
+    longest = Math.max(longest, run);
+  }
+  // Current streak: walk back from the latest day; today may still be empty.
+  let current = 0;
+  let index = days.length - 1;
+  if (days[index] && days[index].count === 0) index -= 1;
+  while (index >= 0 && days[index].count > 0) {
+    current += 1;
+    index -= 1;
+  }
+  const busiest = days.reduce((best, day) => (day.count > best.count ? day : best), days[0]);
+  const activeDays = days.filter((day) => day.count > 0).length;
+  // Month labels sit above the first week that starts in a new month.
+  const months: { column: number; label: string }[] = [];
+  let lastMonth = -1;
+  weeks.forEach((week, column) => {
+    const date = new Date(`${week[0].date}T00:00:00Z`);
+    const month = date.getUTCMonth();
+    if (month !== lastMonth && column < weeks.length - 1) {
+      months.push({ column, label: date.toLocaleString('en-US', { month: 'short', timeZone: 'UTC' }) });
+    }
+    lastMonth = month;
+  });
+  return { current, longest, busiest, activeDays, months };
+}

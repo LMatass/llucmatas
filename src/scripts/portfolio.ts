@@ -85,3 +85,43 @@ window.addEventListener('resize', updateNavigation);
 updateNavigation();
 
 export {};
+
+const card = document.querySelector<HTMLElement>('[data-contribution-card]');
+const tooltip = card?.querySelector<HTMLElement>('.contribution-tooltip');
+if (card && tooltip) {
+  let active: HTMLElement | null = null;
+  const hide = () => {
+    tooltip.hidden = true;
+    active?.classList.remove('active');
+    active = null;
+  };
+  const show = (cell: HTMLElement) => {
+    if (active === cell) return;
+    active?.classList.remove('active');
+    active = cell;
+    const count = Number(cell.dataset.count);
+    tooltip.innerHTML = `<strong>${count === 0 ? 'No contributions' : `${count} contribution${count === 1 ? '' : 's'}`}</strong><br>${cell.dataset.date}`;
+    tooltip.hidden = false;
+    const cardBox = card.getBoundingClientRect();
+    const box = cell.getBoundingClientRect();
+    const half = tooltip.offsetWidth / 2;
+    const center = box.left - cardBox.left + box.width / 2;
+    tooltip.style.left = `${Math.min(Math.max(center, half + 8), cardBox.width - half - 8)}px`;
+    tooltip.style.top = `${box.top - cardBox.top}px`;
+  };
+  const cellAt = (target: EventTarget | null) => (target as HTMLElement | null)?.closest<HTMLElement>('.contribution-graph .cell') ?? null;
+  card.addEventListener('pointerover', (event) => {
+    const cell = cellAt(event.target);
+    if (cell) show(cell);
+    else hide();
+  });
+  card.addEventListener('pointerleave', hide);
+  card.addEventListener('pointerdown', (event) => {
+    const cell = cellAt(event.target);
+    if (cell) show(cell);
+  });
+  const scroller = card.querySelector<HTMLElement>('.contribution-scroll');
+  scroller?.addEventListener('scroll', hide, { passive: true });
+  // Narrow screens open on the most recent weeks.
+  if (scroller) scroller.scrollLeft = scroller.scrollWidth;
+}
