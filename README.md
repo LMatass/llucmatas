@@ -18,7 +18,13 @@ npm run build
 npm run preview
 ```
 
-Production output is in `dist/`. No secrets or server are needed. Nothing is deployed automatically.
+Production output is in `dist/`. The contribution graph fetches GitHub data at build time using Railway's `GITHUB_TOKEN` variable.
+
+## Daily contribution sync
+
+`.github/workflows/refresh.yml` rebuilds and deploys to Railway every day at 04:00 UTC (GitHub may delay scheduled runs), and can also be run manually from Actions. It then checks that the live graph includes today's date; a missing or stale graph fails the job.
+
+The repository's Actions secret `RAILWAY_TOKEN` must contain a Railway project token scoped to this project's production environment. If Actions reports `Invalid RAILWAY_TOKEN`, create a replacement in Railway → Project Settings → Tokens, update the Actions secret, and run **Refresh deploy** manually. Keep this separate from the `GITHUB_TOKEN` configured in Railway, which reads the contribution calendar.
 
 ## Content
 
